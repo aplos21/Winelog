@@ -1,6 +1,51 @@
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
+<div class="container-fluid mt-4 px-md-5">
+  <div class="row">
+    
+    <%# --- ABA LATERAL ESQUERDA (USUÁRIOS) --- %>
+    <div class="col-md-3 d-none d-md-block">
+      <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px; background: rgba(255, 255, 255, 0.9);">
+        <div class="card-body">
+          <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">
+            <i class="bi bi-people-fill me-2 text-primary"></i>Membros
+          </h5>
+          
+          <div class="user-sidebar-list" style="max-height: 80vh; overflow-y: auto;">
+            <% @users.each do |user| %>
+              <div class="d-flex align-items-center mb-3">
+                <div class="position-relative">
+                  <% if user.photo.attached? %>
+                    <%= image_tag user.photo, class: "rounded-circle border shadow-sm", style: "width: 42px; height: 42px; object-fit: cover;" %>
+                  <% else %>
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 42px; height: 42px; font-size: 0.9rem;">
+                      <%= user.nome.presence ? user.nome[0].upcase : "U" %>
+                    </div>
+                  <% end %>
+                  
+                  <%# Indicador Online/Offline (Lógica de 5 minutos) %>
+                  <% is_online = user.last_seen_at.present? && user.last_seen_at > 5.minutes.ago %>
+                  <span class="position-absolute bottom-0 end-0 border border-2 border-white rounded-circle p-1 <%= is_online ? 'bg-success' : 'bg-secondary' %>" 
+                        style="width: 13px; height: 13px;" 
+                        title="<%= is_online ? 'Online' : 'Offline' %>">
+                  </span>
+                </div>
+                
+                <div class="ms-3 overflow-hidden">
+                  <p class="mb-0 fw-bold text-truncate small">
+                    <%= user.nome.presence || user.email.split('@').first %>
+                  </p>
+                  <small class="text-muted d-block" style="font-size: 0.7rem;">
+                    <%= is_online ? "Ativo agora" : "Visto #{time_ago_in_words(user.last_seen_at)} atrás" if user.last_seen_at %>
+                  </small>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# --- CONTEÚDO CENTRAL (POSTAGENS) --- %>
+    <div class="col-md-9 col-lg-7 mx-auto">
     
       <h1 class="mb-5 text-center fw-bold text-dark"> Postagens da Comunidade </h1>
       
@@ -23,7 +68,6 @@
           <% end %>
         <% end %>
       </div>
-      <%# ------------------------- %>
 
       <% if @wines.any? %>
         <% @wines.each do |wine| %>
@@ -35,13 +79,12 @@
                 <%= image_tag wine.user.photo, class: "rounded-circle border shadow-sm", style: "width: 45px; height: 45px; object-fit: cover;" %>
               <% else %>
                 <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">
-                  <%= wine.user.nome[0].upcase %>
+                  <%= wine.user.nome.presence ? wine.user.nome[0].upcase : "U" %>
                 </div>
               <% end %>
 
               <div class="ms-3">
-                <h6 class="mb-0 fw-bold"><%= wine.user.nome.split('@').first %></h6>
-                <%# ALTERAÇÃO AQUI: Adicionado data formatada + tempo relativo %>
+                <h6 class="mb-0 fw-bold"><%= wine.user.nome.presence || wine.user.email.split('@').first %></h6>
                 <small class="text-muted">
                   <i class="bi bi-calendar3 me-1"></i> <%= wine.created_at.strftime("%d/%m/%Y") %> 
                   <span class="mx-1">•</span> 
@@ -60,7 +103,7 @@
             <div class="card-body px-4">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h4 class="card-title fw-bold mb-0 text-dark"><%= wine.name %></h4>
-                <span class="badge bg-warning text-dark fs-6 rounded-pill">⭐ <%= wine.rating %>/5</span>
+                <span class="badge bg-warning text-dark fs-6 rounded-pill">⭐ <%= number_with_precision(wine.rating, precision: 1) %>/5</span>
               </div>
 
               <p class="text-muted small mb-3">
@@ -86,12 +129,12 @@
                         <%= image_tag comment.user.photo, class: "rounded-circle me-2 border shadow-sm", style: "width: 35px; height: 35px; object-fit: cover;" %>
                       <% else %>
                         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold me-2 shadow-sm" style="width: 35px; height: 35px; font-size: 0.75rem;">
-                          <%= comment.user.nome[0].upcase %>
+                          <%= comment.user.nome.presence ? comment.user.nome[0].upcase : "U" %>
                         </div>
                       <% end %>
 
                       <div class="bg-white p-2 rounded-3 flex-grow-1 position-relative shadow-sm border-0">
-                        <small class="fw-bold d-block text-primary"><%= comment.user.nome.split('@').first %></small>
+                        <small class="fw-bold d-block text-primary"><%= comment.user.nome.presence || comment.user.email.split('@').first %></small>
                         <small class="text-dark"><%= comment.content %></small>
                         
                         <% if user_signed_in? && comment.user == current_user %>
