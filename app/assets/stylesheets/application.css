@@ -1,0 +1,95 @@
+  
+/*   
+  arquivo view/devise/registrations/edit.html */
+  
+  @keyframes photoSelected {
+    from { 
+      opacity: 0; 
+      transform: scale(0.8) rotate(-5deg); 
+    }
+    to { 
+      opacity: 1; 
+      transform: scale(1) rotate(0deg); 
+    }
+  }
+
+  .photo-unsaved {
+    animation: photoSelected 0.5s ease-out forwards;
+    border: 4px solid #0d6efd !important; /* Destaque azul */
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+  }
+
+  #photo-preview {
+    transition: all 0.3s ease;
+  }
+
+
+
+    /* 1. Animação para a troca da foto */
+  @keyframes photoSelected {
+    from { opacity: 0; transform: scale(0.8) rotate(-5deg); }
+    to { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  /* 2. Animação de vibração para campos com erro */
+  @keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  .photo-unsaved {
+    animation: photoSelected 0.5s ease-out forwards;
+    border: 4px solid #0d6efd !important;
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+  }
+
+  /* Estilo para destacar o erro no campo */
+  .is-invalid-field {
+    border: 2px solid #dc3545 !important;
+    animation: shakeError 0.4s ease-in-out;
+  }
+
+  .error-text {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+    font-weight: bold;
+  }
+
+
+
+  /* 1. Estilização do Texto de Boas-vindas (Fixo e sem Balão) */
+  .texto-boas-vindas {
+    color: #000000;
+    text-align: center;
+    text-shadow: 2px 2px 15px rgb(206, 193, 167), 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+    /* Ajuste para descer o texto e não cobrir a logo do topo */
+    padding-top: 400px; 
+  }
+
+  .texto-boas-vindas h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .texto-boas-vindas p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  /* 2. Estilo do Card de Cadastro (Igual ao de Login) */
+  .login-glass {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  }
+
+
+  

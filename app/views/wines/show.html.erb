@@ -1,0 +1,16 @@
+<p>
+  <strong>Local / Origem:</strong>
+  <%# Trocamos @wine.region.name pelo novo campo @wine.local %>
+  <%= @wine.local.presence || "Não informado" %>
+</p>
+
+<p>
+  <strong>Tags:</strong>
+  <% @wine.tags.each do |tag| %>
+    <span class="badge"><%= tag.name %></span>
+  <% end %>
+</p>
+
+<% if @wine.photo.attached? %>
+  <%= image_tag @wine.photo, style: "width: 300px; border-radius: 8px;" %>
+<% end %>

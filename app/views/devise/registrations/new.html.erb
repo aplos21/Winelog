@@ -1,0 +1,69 @@
+<div class="container-fluid vh-100 d-flex align-items-center">
+  <div class="row w-100 align-items-center">
+    
+    <%# LADO ESQUERDO: Texto posicionado mais abaixo %>
+    <div class="col-md-6 col-lg-7 d-none d-md-flex justify-content-end pe-5">
+      <div class="texto-boas-vindas" style="max-width: 500px;">
+        <h1>Vai entrar? <br> Eis um provérbio</h1>
+        <p>
+          "Depois de S. Martinho,"<br> "bebe o vinho e deixa a água para o moinho."
+        </p>
+      </div>
+    </div>
+
+    <%# LADO DIREITO: Card de Sign Up %>
+    <div class="col-md-5 col-lg-4 col-xl-3">
+      <div class="card shadow-lg border-0 p-4 rounded-4 login-glass">
+        <div class="mb-4 text-center">
+          <div class="mb-2">
+            <%= image_tag "emblema_confraria.png", alt: "Emblema", style: "height: 80px;" %>
+          </div>
+          <h2 class="fw-bold text-dark mb-0">Criar Conta</h2>
+          <p class="text-dark small fw-medium">Junte-se à nossa confraria.</p>
+        </div>
+
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <%# NOVO CAMPO: NOME %>
+          <div class="mb-3">
+            <%= f.label :nome, "Nome Completo", class: "form-label fw-bold small text-dark" %>
+            <%= f.text_field :nome, autofocus: true, 
+                class: "form-control shadow-sm border-0 bg-white-50 py-2", placeholder: "Como se chama?" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :email, class: "form-label fw-bold small text-dark" %>
+            <%= f.email_field :email, autocomplete: "email", 
+                class: "form-control shadow-sm border-0 bg-white-50 py-2", placeholder: "seu@email.com" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password, "Senha", class: "form-label fw-bold small text-dark" %>
+            <% if @minimum_password_length %>
+              <br><small class="text-muted">(mínimo <%= @minimum_password_length %> caracteres)</small>
+            <% end %>
+            <%= f.password_field :password, autocomplete: "new-password", 
+                class: "form-control shadow-sm border-0 bg-white-50 py-2", placeholder: "••••••" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password_confirmation, "Confirmar Senha", class: "form-label fw-bold small text-dark" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", 
+                class: "form-control shadow-sm border-0 bg-white-50 py-2", placeholder: "••••••" %>
+          </div>
+
+          <div class="d-grid mt-4">
+            <%= f.submit "Cadastrar", class: "btn btn-dark fw-bold shadow-sm py-2" %>
+          </div>
+        <% end %>
+
+        <div class="mt-4 pt-3 border-top border-secondary text-center">
+          <div class="small text-dark mb-2 fw-bold">Já tem uma conta?</div>
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

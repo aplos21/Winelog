@@ -1,0 +1,56 @@
+
+<div class="container-fluid vh-100 d-flex align-items-center">
+  <div class="row w-100 align-items-center">
+    
+    <%# LADO ESQUERDO: Apenas as letras fixas (Sem balão e sem animação) %>
+    <div class="col-md-6 col-lg-7 d-none d-md-flex justify-content-end pe-5">
+      <div class="texto-boas-vindas" style="max-width: 500px;">
+        <h1>Bem-vindo à <br> Confraria Grau 33</h1>
+        <p>
+          "Onde cada garrafa conta uma história <br> e cada brinde celebra a amizade."
+        </p>
+      </div>
+    </div>
+
+    <%# LADO DIREITO: Card de Login %>
+    <div class="col-md-5 col-lg-4 col-xl-3">
+      <div class="card shadow-lg border-0 p-4 rounded-4 login-glass">
+        <div class="mb-4 text-center">
+          <div class="mb-2">
+            <%= image_tag "emblema_confraria.png", alt: "Emblema", style: "height: 80px;" %>
+          </div>
+          <h2 class="fw-bold text-dark mb-0">Entrar</h2>
+        </div>
+
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <div class="mb-3">
+            <%= f.label :email, "E-mail", class: "form-label fw-bold small text-dark" %>
+            <%= f.email_field :email, autofocus: true, class: "form-control shadow-sm border-0 bg-white-50 py-2", placeholder: "seu@email.com" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password, "Senha", class: "form-label fw-bold small text-dark" %>
+            <%= f.password_field :password, class: "form-control shadow-sm border-0 bg-white-50 py-2", placeholder: "••••••" %>
+          </div>
+
+          <%# MANTIDO: Lembre-se de mim %>
+          <% if devise_mapping.rememberable? %>
+            <div class="mb-3 form-check d-flex align-items-center gap-2">
+              <%= f.check_box :remember_me, class: "form-check-input mt-0 shadow-sm" %>
+              <%= f.label :remember_me, "Lembre-se de mim", class: "form-check-label small text-dark" %>
+            </div>
+          <% end %>
+
+          <div class="d-grid mt-4">
+            <%= f.submit "Entrar", class: "btn btn-dark fw-bold shadow-sm py-2" %>
+          </div>
+        <% end %>
+
+        <div class="mt-4 pt-3 border-top border-secondary text-center">
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

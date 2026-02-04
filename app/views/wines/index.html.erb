@@ -1,0 +1,65 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Minha Adega</h1>
+  <%= link_to "Novo Vinho", new_wine_path, class: "btn btn-primary" %>
+</div>
+
+<div class="row">
+  <% @wines.each do |wine| %>
+
+    <!-- foto do usuário -->
+    <div class="d-flex align-items-center mb-2">
+      <% if wine.user.photo.attached? %>
+        <%= image_tag wine.user.photo, class: "rounded-circle me-2 border", style: "width: 35px; height: 35px; object-fit: cover;" %>
+      <% else %>
+        <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+          <i class="bi bi-person-fill text-white" style="font-size: 1rem;"></i>
+        </div>
+      <% end %>
+      <span class="text-muted small fw-bold"><%= wine.user.nome.split('@').first %></span>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <% if wine.photo.attached? %>
+          <%= image_tag wine.photo, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+        <% else %>
+          <div class="bg-light text-muted d-flex align-items-center justify-content-center" style="height: 200px;">
+            <i class="bi bi-camera" style="font-size: 2rem;"></i>
+          </div>
+        <% end %>
+        
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold"><%= wine.name %></h5>
+          
+          <p class="text-muted small mb-2">
+            📍 <%= wine.local.presence || "Local não informado" %>
+          </p>
+
+          <div class="mb-3">
+            <% wine.tags.each do |tag| %>
+              <span class="badge rounded-pill bg-secondary" style="font-size: 0.7rem;"><%= tag.name %></span>
+            <% end %>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-auto">
+            <span class="fw-bold text-warning">⭐ <%= wine.rating %>/5</span>
+            
+            <div class="btn-group">
+              <%# ALTERAÇÃO AQUI: Mudamos de 'wine_path' para 'edit_wine_path' %>
+              <%= link_to edit_wine_path(wine), class: "btn btn-outline-primary btn-sm" do %>
+                <i class="bi bi-pencil-square"></i> Alterar
+              <% end %>
+              
+              <% if wine.user == current_user %>
+                <%= link_to wine_path(wine), 
+                            data: { turbo_method: :delete, turbo_confirm: "Deseja mesmo excluir este vinho?" }, 
+                            class: "btn btn-outline-danger btn-sm" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

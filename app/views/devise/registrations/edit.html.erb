@@ -1,0 +1,157 @@
+<style>
+  /* 1. Animações de Sucesso e Erro */
+  @keyframes photoSelected {
+    from { opacity: 0; transform: scale(0.8) rotate(-5deg); }
+    to { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  @keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  /* 2. Classes de Estado */
+  .photo-unsaved {
+    animation: photoSelected 0.5s ease-out forwards;
+    border: 4px solid #0d6efd !important;
+    box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+  }
+
+  .is-invalid-field {
+    border: 2px solid #dc3545 !important;
+    animation: shakeError 0.4s ease-in-out;
+  }
+
+  .error-text {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+    font-weight: bold;
+  }
+</style>
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card shadow-lg border-0 p-4">
+        <h2 class="mb-4 text-center fw-bold text-dark">Configurações da Conta</h2>
+
+        <%# --- FORMULÁRIO 1: FOTO, NOME E EMAIL --- %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true, class: "mb-5" }) do |f| %>
+          <div class="card border-primary mb-3 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title text-primary mb-4"><i class="bi bi-person-circle me-2"></i>Alterar Perfil</h5>
+              
+              <%# SEÇÃO DA FOTO %>
+              <div class="text-center mb-4">
+                <div class="position-relative d-inline-block">
+                  <% if resource.persisted? && resource.photo.attached? && resource.photo.persisted? %>
+                    <%= image_tag resource.photo, id: "photo-preview", class: "rounded-circle border shadow-sm mb-2", style: "width: 110px; height: 110px; object-fit: cover;" %>
+                  <% else %>
+                    <img id="photo-preview" src="#" class="rounded-circle border shadow-sm mb-2 d-none" style="width: 110px; height: 110px; object-fit: cover;">
+                    <div id="photo-placeholder" class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center border mb-2 shadow-sm" style="width: 110px; height: 110px;">
+                      <i class="bi bi-camera-fill text-secondary" style="font-size: 2.5rem;"></i>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="mt-2">
+                  <label for="user_photo_upload" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-image me-1"></i> Selecionar Nova Foto
+                  </label>
+                  <%= f.file_field :photo, class: "d-none", id: "user_photo_upload", accept: 'image/*' %>
+                </div>
+              </div>
+
+              <%# CAMPO DE NOME (ADICIONADO) %>
+              <div class="mb-3">
+                <%= f.label :nome, "Nome de Exibição", class: "form-label fw-bold small" %>
+                <%= f.text_field :nome, class: "form-control shadow-sm", placeholder: "Ex: mmt" %>
+              </div>
+
+              <%# CAMPO DE EMAIL %>
+              <div class="mb-3">
+                <%= f.label :email, "E-mail", class: "form-label fw-bold small" %>
+                <%= f.email_field :email, class: "form-control shadow-sm" %>
+              </div>
+
+              <%# CONFIRMAÇÃO DE SENHA PARA SALVAR PERFIL %>
+              <div class="mb-3 p-2 border rounded <%= 'bg-danger-subtle border-danger' if resource.errors[:current_password].any? %>">
+                <%= f.label :current_password, "Confirme sua Senha Atual para mudar perfil", class: "form-label fw-bold small text-danger" %>
+                <%= f.password_field :current_password, class: "form-control form-control-sm #{'is-invalid-field' if resource.errors[:current_password].any?}", placeholder: "Senha necessária para salvar" %>
+                <% if resource.errors[:current_password].any? %>
+                  <span class="error-text"><i class="bi bi-exclamation-triangle-fill me-1"></i> Senha incorreta.</span>
+                <% end %>
+              </div>
+
+              <div class="d-grid">
+                <%= f.submit "Atualizar Perfil", class: "btn btn-primary fw-bold" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%# --- FORMULÁRIO 2: APENAS SENHA --- %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+          <div class="card border-info shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title text-info mb-4"><i class="bi bi-shield-lock me-2"></i>Alterar Senha</h5>
+              
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <%= f.label :password, "Nova Senha", class: "form-label fw-bold small" %>
+                  <%= f.password_field :password, class: "form-control shadow-sm #{'is-invalid-field' if resource.errors[:password].any?}", placeholder: "Mínimo 6 caracteres" %>
+                  <% if resource.errors[:password].any? %>
+                    <span class="error-text"><i class="bi bi-x-circle-fill"></i> <%= resource.errors.full_messages_for(:password).first %></span>
+                  <% end %>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <%= f.label :password_confirmation, "Confirmar Nova Senha", class: "form-label fw-bold small" %>
+                  <%= f.password_field :password_confirmation, class: "form-control shadow-sm #{'is-invalid-field' if resource.errors[:password_confirmation].any?}" %>
+                  <% if resource.errors[:password_confirmation].any? %>
+                    <span class="error-text"><i class="bi bi-x-circle-fill"></i> Não coincide.</span>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="mb-3 p-2 border rounded <%= 'bg-danger-subtle border-danger' if resource.errors[:current_password].any? %>">
+                <%= f.label :current_password, "Confirme sua Senha Atual para mudar senha", class: "form-label fw-bold small text-danger" %>
+                <%= f.password_field :current_password, class: "form-control form-control-sm #{'is-invalid-field' if resource.errors[:current_password].any?}", placeholder: "Senha necessária para salvar" %>
+              </div>
+
+              <div class="d-grid">
+                <%= f.submit "Atualizar Senha", class: "btn btn-info text-white fw-bold" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%# BOTÃO EXCLUIR %>
+        <div class="mt-5 text-center">
+          <%= button_to registration_path(resource_name), method: :delete, class: "btn btn-sm btn-link text-danger text-decoration-none", data: { turbo_confirm: "Tem certeza que deseja apagar sua conta?" } do %>
+            <i class="bi bi-trash me-1"></i> Excluir conta
+          <% end %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Script para o preview da foto
+  document.getElementById('user_photo_upload').onchange = function (evt) {
+    const [file] = this.files
+    if (file) {
+      const preview = document.getElementById('photo-preview');
+      const placeholder = document.getElementById('photo-placeholder');
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('photo-unsaved', 'd-none');
+      void preview.offsetWidth; // Reinicia animação
+      preview.classList.add('photo-unsaved');
+      if (placeholder) placeholder.classList.add('d-none');
+    }
+  }
+</script>
