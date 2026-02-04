@@ -63,6 +63,6 @@ class WinesController < ApplicationController
   end
 
   def wine_params
-    params.require(:wine).permit(:name, :description, :rating, :local, :photo, tag_ids: [])
+    params.require(:wine).permit(:name, :description, :rating, :local, :photo, :tag_list)
   end
 end

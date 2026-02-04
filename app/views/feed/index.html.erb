@@ -1,9 +1,30 @@
 <div class="container mt-4">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-      <h1 class="mb-5 text-center fw-bold text-dark">🍷 Comunidade Winelog</h1>
+    
+      <h1 class="mb-5 text-center fw-bold text-dark"> Postagens da Comunidade </h1>
+      
+      <%# --- BARRA DE PESQUISA --- %>
+      <div class="mb-5">
+        <%= form_with url: feed_path, method: :get, local: true, class: "d-flex gap-2" do |f| %>
+          <div class="input-group shadow-sm rounded-4 overflow-hidden">
+            <%= f.text_field :query, 
+                  value: params[:query], 
+                  placeholder: "Buscar por vinho, local, #tag ou nome...", 
+                  class: "form-control border-0 py-3 px-4",
+                  style: "outline: none;" %>
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+          
+          <% if params[:query].present? %>
+            <%= link_to "Limpar", feed_path, class: "btn btn-outline-secondary d-flex align-items-center rounded-4 px-3" %>
+          <% end %>
+        <% end %>
+      </div>
+      <%# ------------------------- %>
 
-      <%# --- LISTAGEM DE VINHOS --- %>
       <% if @wines.any? %>
         <% @wines.each do |wine| %>
           <div class="card mb-5 shadow-lg border-0 rounded-4 overflow-hidden">
@@ -14,13 +35,18 @@
                 <%= image_tag wine.user.photo, class: "rounded-circle border shadow-sm", style: "width: 45px; height: 45px; object-fit: cover;" %>
               <% else %>
                 <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">
-                  <%= (wine.user.nome.presence || "U")[0].upcase %>
+                  <%= wine.user.nome[0].upcase %>
                 </div>
               <% end %>
 
               <div class="ms-3">
-                <h6 class="mb-0 fw-bold"><%= wine.user.nome.presence || wine.user.email.split('@').first %></h6>
-                <small class="text-muted"><%= time_ago_in_words(wine.created_at) %> atrás</small>
+                <h6 class="mb-0 fw-bold"><%= wine.user.nome.split('@').first %></h6>
+                <%# ALTERAÇÃO AQUI: Adicionado data formatada + tempo relativo %>
+                <small class="text-muted">
+                  <i class="bi bi-calendar3 me-1"></i> <%= wine.created_at.strftime("%d/%m/%Y") %> 
+                  <span class="mx-1">•</span> 
+                  <%= time_ago_in_words(wine.created_at) %> atrás
+                </small>
               </div>
             </div>
 
@@ -60,20 +86,27 @@
                         <%= image_tag comment.user.photo, class: "rounded-circle me-2 border shadow-sm", style: "width: 35px; height: 35px; object-fit: cover;" %>
                       <% else %>
                         <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold me-2 shadow-sm" style="width: 35px; height: 35px; font-size: 0.75rem;">
-                          <%= (comment.user.nome.presence || "U")[0].upcase %>
+                          <%= comment.user.nome[0].upcase %>
                         </div>
                       <% end %>
 
                       <div class="bg-white p-2 rounded-3 flex-grow-1 position-relative shadow-sm border-0">
-                        <small class="fw-bold d-block text-primary"><%= comment.user.nome.presence || comment.user.email.split('@').first %></small>
+                        <small class="fw-bold d-block text-primary"><%= comment.user.nome.split('@').first %></small>
                         <small class="text-dark"><%= comment.content %></small>
+                        
+                        <% if user_signed_in? && comment.user == current_user %>
+                          <%= link_to wine_comment_path(wine, comment), 
+                                      data: { turbo_method: :delete, turbo_confirm: "Apagar comentário?" }, 
+                                      class: "position-absolute top-0 end-0 mt-1 me-2 text-danger text-decoration-none fw-bold" do %>
+                            <i class="bi bi-x-lg" style="font-size: 0.7rem;"></i>
+                          <% end %>
+                        <% end %>
                       </div>
                     </div>
                   <% end %>
                 <% end %>
               </div>
 
-              <%# Formulário de Comentário rápido %>
               <% if user_signed_in? %>
                 <%= form_with(model: [wine, wine.comments.build], class: "mt-3 pt-3 border-top") do |f| %>
                   <div class="input-group">
@@ -86,11 +119,11 @@
           </div>
         <% end %>
       <% else %>
-        <div class="text-center py-5">
-          <p class="text-muted">Ainda não há postagens na comunidade. Seja o primeiro!</p>
-          <%= link_to "Adicionar Vinho", new_wine_path, class: "btn btn-primary rounded-pill" %>
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+          <p class="text-muted mb-0">Nenhum vinho encontrado para sua busca. 🍷</p>
         </div>
       <% end %>
+
     </div>
   </div>
 </div>

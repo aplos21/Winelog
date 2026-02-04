@@ -24,9 +24,14 @@
 
   <div class="row">
   <div class="col-md-6 mb-3">
-    <%= form.label :rating, "Avaliação (1 a 5 ⭐)", class: "form-label fw-bold" %>
-    <%= form.number_field :rating, class: "form-control", min: 1, max: 5 %>
-  </div>
+  <%= form.label :rating, "Avaliação (1 a 5 ⭐)", class: "form-label fw-bold" %>
+  <%= form.number_field :rating, 
+      class: "form-control", 
+      min: 1, 
+      max: 5, 
+      step: 0.1, # Permite 4.1, 4.2, etc. Use 0.5 para passos maiores.
+      placeholder: "Ex: 4.5" %>
+</div>
 
   <div class="col-md-6 mb-3">
     <%# Campo de Texto no lugar do Select %>
@@ -40,17 +45,10 @@
     <%= form.file_field :photo, class: "form-control" %>
   </div>
 
-  <div class="mb-4">
-    <label class="form-label fw-bold d-block">Características (Tags)</label>
-    <div class="d-flex flex-wrap gap-3 p-2 border rounded bg-white">
-      <%= form.collection_check_boxes :tag_ids, Tag.all, :id, :name do |b| %>
-        <div class="form-check">
-          <%= b.check_box(class: "form-check-input") %>
-          <%= b.label(class: "form-check-label") %>
-        </div>
-      <% end %>
-    </div>
-  </div>
+<div class="mb-4">
+  <%= form.label :tag_list, "Características (Tags)", class: "form-label fw-bold" %>
+  <%= form.text_field :tag_list, class: "form-control", placeholder: "Ex: Encorpado, Suave, Frutado (separe por vírgula)" %>
+</div>
 
   <div class="d-grid">
     <%= form.submit "Salvar Vinho no Winelog", class: "btn btn-primary btn-lg" %>
