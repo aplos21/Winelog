@@ -104,13 +104,15 @@ test:
 #     <<: *primary_production
 #     database: winelog_production_cable
 #     migrations_paths: db/cable_migrate
-
 production:
   primary: &primary_production
     adapter: postgresql
     encoding: unicode
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-    url: <%= ENV["DATABASE_URL"] %>
+    host: <%= ENV["DB_HOST"] %>
+    database: "winelog_production"
+    username: "winelog"
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: winelog_production_cache

@@ -22,7 +22,7 @@ registry:
 env:
   clear:
     SOLID_QUEUE_IN_PUMA: true
-    DATABASE_URL: <%= "postgresql://winelog:#{ENV['POSTGRES_PASSWORD']}@winelog-db:5432/winelog_production" %>
+    DB_HOST: "winelog-db"
   secret:
     - RAILS_MASTER_KEY
     - POSTGRES_PASSWORD
