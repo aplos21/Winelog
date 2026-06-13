@@ -1,14 +1,18 @@
 Rails.application.routes.draw do
- # Página inicial do site
+  # Health check do Rails utilizado pelo Kamal Proxy para validar o deploy
+  get "up" => "rails/health#show", as: :rails_health_check
+
+  # Página inicial do site
   root "wines#index"
   
-  # Rota para a Comunidade (ESTA É A LINHA QUE ESTÁ FALTANDO)
+  # Rota para a Comunidade
   get "comunidade", to: "feed#index", as: :feed
   
   # Rotas de Vinhos, Regiões e Usuários
-  resources :wines
   resources :regions
   devise_for :users
+  
+  # Agrupando os recursos de vinhos de forma limpa
   resources :wines do
     resources :comments, only: [:create, :destroy]
   end
