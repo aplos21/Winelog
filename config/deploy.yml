@@ -1,63 +1,54 @@
-# Name of your application. Used to uniquely configure containers.
+# Nome da sua aplicação
 service: winelog
 
-# Name of the container image.
+# Nome da imagem no Docker Hub
 image: mateusmed31415/winelog
 
-# Deploy to these servers.
+# Servidor VPS da Oracle Cloud (Vinhedo)
 servers:
   web:
-    - 193.123.125.247
-proxy:
-  app_port: 80
+    - 157.151.28.170
 
-# Where you keep your container images.
+# Roteamento interno do Kamal Proxy para o Rails
+proxy:
+  app_port: 3000
+
+# Onde as imagens do contêiner serão guardadas
 registry:
   server: index.docker.io
   username: mateusmed31415
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Inject ENV variables into containers
+# Injeção de variáveis de ambiente de produção
 env:
   clear:
+    RAILS_ENV: production
+    RAILS_LOG_TO_STDOUT: true
     SOLID_QUEUE_IN_PUMA: true
-    DB_HOST: "winelog-db"
+    # Substitua abaixo com os dados reais de conexão do seu Oracle
+    DATABASE_URL: "oracle_enhanced://usuario_prod:senha_prod@IP_DO_SEU_ORACLE:1521/NOME_DO_SERVICO"
   secret:
     - RAILS_MASTER_KEY
-    - POSTGRES_PASSWORD
-accessories:
-  db:
-    image: postgres:16
-    host: 193.123.125.247
-    port: "5432:5432"
-    env:
-      clear:
-        POSTGRES_DB: winelog_production
-        POSTGRES_USER: winelog
-      secret:
-        - POSTGRES_PASSWORD
-    directories:
-      - winelog_postgres_data:/var/lib/postgresql/data
+    - ADMIN_EMAIL
 
-# Use a persistent storage volume
+# Volumes persistentes para uploads locais do Active Storage
 volumes:
   - "winelog_storage:/rails/storage"
 
-# Bridge fingerprinted assets, like JS and CSS, between versions.
+# Caminho dos assets (CSS e JS) compilados pelo Propshaft
 asset_path: /rails/public/assets
 
-# Use a different ssh user than root
+# Usuário padrão das instâncias Ubuntu na Oracle Cloud
 ssh:
   user: ubuntu
 
-# Configure the image builder.
+# Configuração essencial para os processadores Ampere (ARM64) da OCI
 builder:
-  arch: amd64
+  arch: arm64
 
-# Aliases are triggered with "bin/kamal <alias>".
+# Atalhos úteis (Ex: kamal console)
 aliases:
   console: app exec --interactive --reuse "bin/rails console"
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
-  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
