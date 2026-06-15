@@ -33,3 +33,6 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+# Ignorar arquivos de variáveis de ambiente locais
+.env
+.kamal

@@ -3,32 +3,26 @@ class CommentsController < ApplicationController
 
   def create
     @wine = Wine.find(params[:wine_id])
-    @comment = @wine.comments.new(comment_params)
+    @comment = @wine.comments.build(comment_params)
     @comment.user = current_user
 
     if @comment.save
-      redirect_to feed_path, notice: "Comentário enviado!"
+      redirect_back fallback_location: root_path, notice: "Enviado com sucesso!"
     else
-      redirect_to feed_path, alert: "Erro ao enviar comentário."
+      redirect_back fallback_location: root_path, alert: "Erro ao publicar."
     end
   end
 
   def destroy
-    @wine = Wine.find(params[:wine_id])
-    @comment = @wine.comments.find(params[:id])
-
-    # Verifica se o comentário pertence ao usuário logado
-    if @comment.user == current_user
-        @comment.destroy
-        redirect_to feed_path, notice: "Comentário removido!"
-    else
-        redirect_to feed_path, alert: "Você não tem permissão para apagar este comentário."
-    end
+    # Garante que o usuário só delete o próprio comentário
+    @comment = current_user.comments.find(params[:id])
+    @comment.destroy
+    redirect_back fallback_location: root_path, notice: "Comentário removido."
   end
 
   private
 
   def comment_params
-    params.require(:comment).permit(:content)
+    params.require(:comment).permit(:content, :parent_id)
   end
 end

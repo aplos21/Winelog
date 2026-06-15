@@ -1,8 +1,9 @@
-<div class="container-fluid mt-4 px-md-5">
-  <div class="row">
+<div class="container-fluid mt-2 mt-md-4 px-1 px-sm-3 px-md-5">
+  <div class="row g-3">
     
     <%# --- ABA LATERAL ESQUERDA (USUÁRIOS) --- %>
-    <div class="col-md-3 d-none d-md-block">
+    <%# d-none d-lg-block: Garante que a barra suma completamente no celular e só apareça em telas grandes, poupando espaço %>
+    <div class="col-lg-3 d-none d-lg-block">
       <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px; background: rgba(255, 255, 255, 0.9);">
         <div class="card-body">
           <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">
@@ -21,7 +22,6 @@
                     </div>
                   <% end %>
                   
-                  <%# Indicador Online/Offline (Lógica de 5 minutos) %>
                   <% is_online = user.last_seen_at.present? && user.last_seen_at > 5.minutes.ago %>
                   <span class="position-absolute bottom-0 end-0 border border-2 border-white rounded-circle p-1 <%= is_online ? 'bg-success' : 'bg-secondary' %>" 
                         style="width: 13px; height: 13px;" 
@@ -45,116 +45,155 @@
     </div>
 
     <%# --- CONTEÚDO CENTRAL (POSTAGENS) --- %>
-    <div class="col-md-9 col-lg-7 mx-auto">
-    
-      <h1 class="mb-5 text-center fw-bold text-dark"> Postagens da Comunidade </h1>
+    <%# col-12: Força o feed a ocupar 100% da largura horizontal da tela no celular! %>
+    <div class="col-12 col-md-9 col-lg-8 col-xl-7 mx-auto">
+      <h1 class="mb-4 mb-md-5 text-center fw-bold text-dark fs-2 fs-md-1"> Postagens da Comunidade </h1>
       
       <%# --- BARRA DE PESQUISA --- %>
-      <div class="mb-5">
+      <div class="mb-4 mb-md-5">
         <%= form_with url: feed_path, method: :get, local: true, class: "d-flex gap-2" do |f| %>
           <div class="input-group shadow-sm rounded-4 overflow-hidden">
-            <%= f.text_field :query, 
-                  value: params[:query], 
-                  placeholder: "Buscar por vinho, local, #tag ou nome...", 
-                  class: "form-control border-0 py-3 px-4",
-                  style: "outline: none;" %>
-            <button type="submit" class="btn btn-primary px-4">
-              <i class="bi bi-search"></i>
-            </button>
+            <%= f.text_field :query, value: params[:query], placeholder: "Buscar...", class: "form-control border-0 py-2 py-md-3 px-3 px-md-4", style: "outline: none;" %>
+            <button type="submit" class="btn btn-primary px-3 px-md-4"><i class="bi bi-search"></i></button>
           </div>
-          
-          <% if params[:query].present? %>
-            <%= link_to "Limpar", feed_path, class: "btn btn-outline-secondary d-flex align-items-center rounded-4 px-3" %>
-          <% end %>
         <% end %>
       </div>
 
       <% if @wines.any? %>
         <% @wines.each do |wine| %>
-          <div class="card mb-5 shadow-lg border-0 rounded-4 overflow-hidden">
+          <%# w-100 e max-width evitam que o card fique esticado em telas gigantes e perfeito em telas pequenas %>
+          <div class="card mb-4 mb-md-5 shadow-lg border-0 rounded-4 overflow-hidden w-100 mx-auto" style="max-width: 620px;">
             
-            <%# Cabeçalho do Post %>
-            <div class="card-header bg-white border-0 d-flex align-items-center py-3 px-4">
+            <div class="card-header bg-white border-0 d-flex align-items-center py-3 px-3 px-md-4">
               <% if wine.user.photo.attached? %>
-                <%= image_tag wine.user.photo, class: "rounded-circle border shadow-sm", style: "width: 45px; height: 45px; object-fit: cover;" %>
+                <%= image_tag wine.user.photo, class: "rounded-circle border shadow-sm flex-shrink-0", style: "width: 45px; height: 45px; object-fit: cover;" %>
               <% else %>
-                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" style="width: 45px; height: 45px;">
                   <%= wine.user.nome.presence ? wine.user.nome[0].upcase : "U" %>
                 </div>
               <% end %>
-
-              <div class="ms-3">
-                <h6 class="mb-0 fw-bold"><%= wine.user.nome.presence || wine.user.email.split('@').first %></h6>
-                <small class="text-muted">
-                  <i class="bi bi-calendar3 me-1"></i> <%= wine.created_at.strftime("%d/%m/%Y") %> 
-                  <span class="mx-1">•</span> 
-                  <%= time_ago_in_words(wine.created_at) %> atrás
-                </small>
+              <div class="ms-3 overflow-hidden">
+                <h6 class="mb-0 fw-bold text-truncate"><%= wine.user.nome.presence || wine.user.email.split('@').first %></h6>
+                <small class="text-muted d-block text-truncate" style="font-size: 0.75rem;">há <%= time_ago_in_words(wine.created_at) %>, <%= wine.created_at.strftime("%d/%m/%Y") %></small>
               </div>
             </div>
 
-            <%# Imagem do Vinho %>
             <% if wine.photo.attached? %>
-              <div class="px-2">
-                 <%= image_tag wine.photo, class: "img-fluid w-100 rounded-3 shadow-sm", style: "max-height: 500px; object-fit: cover;" %>
+              <div class="px-2 px-md-3">
+                 <%# Configuração flexível para a imagem se moldar ao tamanho da tela móvel %>
+                 <%= image_tag wine.photo, class: "img-fluid w-100 rounded-3 shadow-sm", style: "max-height: 450px; object-fit: cover; width: 100%; height: auto;" %>
               </div>
             <% end %>
             
-            <div class="card-body px-4">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h4 class="card-title fw-bold mb-0 text-dark"><%= wine.name %></h4>
-                <span class="badge bg-warning text-dark fs-6 rounded-pill">⭐ <%= number_with_precision(wine.rating, precision: 1) %>/5</span>
+            <div class="card-body px-3 px-md-4">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <h4 class="card-title fw-bold mb-0 text-dark fs-5 fs-md-4 text-break"><%= wine.name %></h4>
+                <span class="badge bg-warning text-dark fs-6 rounded-pill flex-shrink-0">⭐ <%= number_with_precision(wine.rating, precision: 1) %>/5</span>
               </div>
+              <p class="card-text text-secondary mb-3 small text-break"><%= wine.description %></p>
 
-              <p class="text-muted small mb-3">
-                <i class="bi bi-geo-alt-fill text-danger"></i> <strong>Local:</strong> <%= wine.local.presence || "Não informado" %>
-              </p>
-              
-              <p class="card-text text-secondary"><%= wine.description %></p>
-              
-              <div class="mb-3">
-                <% wine.tags.each do |tag| %>
-                  <span class="badge rounded-pill bg-light text-dark border-0 shadow-sm py-2 px-3">#<%= tag.name %></span>
-                <% end %>
-              </div>
-            </div>
+              <%# --- SEÇÃO DE TAGS --- %>
+              <% if wine.respond_to?(:tag_list) && wine.tag_list.present? %>
+                <div class="mb-2">
+                  <% tags = wine.tag_list.is_a?(String) ? wine.tag_list.split(',').map(&:strip) : wine.tag_list %>
+                  <% tags.each do |tag| %>
+                    <% if tag.present? %>
+                      <span class="badge rounded-pill bg-secondary bg-opacity-75 text-white fw-normal mb-1 me-1" style="font-size: 0.7rem;">
+                        <%= tag %>
+                      </span>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div> <%# Fechamento corrigido e isolado do card-body principal %>
 
-            <%# --- SEÇÃO DE COMENTÁRIOS --- %>
-            <div class="card-footer bg-light border-0 py-4 px-4" style="border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem;">
-              <div class="comments-section" style="max-height: 300px; overflow-y: auto;">
-                <% wine.comments.each do |comment| %>
+            <%# --- SEÇÃO DE COMENTÁRIOS INTEGRADA --- %>
+            <div class="card-footer bg-light border-0 py-3 py-md-4 px-3 px-md-4" style="border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem;">
+              <div class="comments-section" style="max-height: 400px; overflow-y: auto;">
+                
+                <% wine.comments.where(parent_id: nil).each do |comment| %>
                   <% if comment.persisted? %>
+                    
+                    <%# --- COMENTÁRIO PAI --- %>
                     <div class="d-flex mb-3 align-items-start">
                       <% if comment.user.photo.attached? %>
-                        <%= image_tag comment.user.photo, class: "rounded-circle me-2 border shadow-sm", style: "width: 35px; height: 35px; object-fit: cover;" %>
+                        <%= image_tag comment.user.photo, class: "rounded-circle me-2 border shadow-sm flex-shrink-0", style: "width: 35px; height: 35px; object-fit: cover;" %>
                       <% else %>
-                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold me-2 shadow-sm" style="width: 35px; height: 35px; font-size: 0.75rem;">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold me-2 shadow-sm flex-shrink-0" style="width: 35px; height: 35px; font-size: 0.75rem;">
                           <%= comment.user.nome.presence ? comment.user.nome[0].upcase : "U" %>
                         </div>
                       <% end %>
 
-                      <div class="bg-white p-2 rounded-3 flex-grow-1 position-relative shadow-sm border-0">
-                        <small class="fw-bold d-block text-primary"><%= comment.user.nome.presence || comment.user.email.split('@').first %></small>
-                        <small class="text-dark"><%= comment.content %></small>
+                      <div class="bg-white p-2 rounded-3 flex-grow-1 position-relative shadow-sm border-0 overflow-hidden">
+                        <small class="fw-bold d-block text-primary text-truncate" style="max-width: 85%; font-size: 0.8rem;"><%= comment.user.nome.presence || comment.user.email.split('@').first %></small>
+                        <small class="text-dark d-block text-break" style="font-size: 0.85rem;"><%= comment.content %></small>
                         
                         <% if user_signed_in? && comment.user == current_user %>
-                          <%= link_to wine_comment_path(wine, comment), 
-                                      data: { turbo_method: :delete, turbo_confirm: "Apagar comentário?" }, 
-                                      class: "position-absolute top-0 end-0 mt-1 me-2 text-danger text-decoration-none fw-bold" do %>
-                            <i class="bi bi-x-lg" style="font-size: 0.7rem;"></i>
-                          <% end %>
+                         <%= link_to wine_comment_path(wine, comment), 
+                            data: { turbo_method: :delete, turbo_confirm: "Apagar?" }, 
+                            class: "position-absolute top-0 end-0 mt-1 me-2 text-danger",
+                            onclick: "sessionStorage.setItem('scrollPos', window.scrollY)" do %>
+                           <i class="bi bi-x-lg" style="font-size: 0.6rem;"></i>
+                         <% end %>
                         <% end %>
                       </div>
                     </div>
+
+                    <%# --- CONTAINER DE RESPOSTAS --- %>
+                    <%# ms-3 ms-md-5: Diminui a identação no celular para o texto não ficar imprensado %>
+                    <div class="replies-container ms-3 ms-md-5 border-start ps-2 ps-md-3 mb-3">
+                      <% comment.replies.each do |reply| %>
+                        <div class="d-flex mb-2 align-items-start">
+                          <% if reply.user.photo.attached? %>
+                            <%= image_tag reply.user.photo, class: "rounded-circle me-2 border shadow-sm flex-shrink-0", style: "width: 28px; height: 28px; object-fit: cover;" %>
+                          <% else %>
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold me-2 shadow-sm flex-shrink-0" style="width: 28px; height: 28px; font-size: 0.6rem;">
+                              <%= reply.user.nome.presence ? reply.user.nome[0].upcase : "U" %>
+                            </div>
+                          <% end %>
+
+                          <div class="bg-white p-2 rounded-3 flex-grow-1 position-relative shadow-sm border-0 mb-1 overflow-hidden">
+                            <small class="fw-bold d-block text-primary text-truncate" style="max-width: 80%; font-size: 0.75rem;"><%= reply.user.nome.presence || reply.user.email.split('@').first %></small>
+                            <small class="text-dark d-block text-break" style="font-size: 0.8rem;"><%= reply.content %></small>
+                            
+                            <% if user_signed_in? && reply.user == current_user %>
+                              <%= link_to wine_comment_path(wine, reply), 
+                                          data: { turbo_method: :delete, turbo_confirm: "Apagar resposta?" }, 
+                                          class: "position-absolute top-0 end-0 mt-1 me-2 text-danger text-decoration-none fw-bold",
+                                          onclick: "sessionStorage.setItem('scrollPos', window.scrollY)" do %>
+                                <i class="bi bi-x-lg" style="font-size: 0.6rem;"></i>
+                              <% end %>
+                            <% end %>
+                          </div>
+                        </div>
+                      <% end %>
+
+                      <% if user_signed_in? %>
+                        <button class="btn btn-sm text-muted fw-bold p-0 mb-1" onclick="document.getElementById('reply-form-<%= comment.id %>').classList.toggle('d-none')">
+                          <small><i class="bi bi-reply-fill"></i> Responder</small>
+                        </button>
+                        <div id="reply-form-<%= comment.id %>" class="d-none mt-1 mb-2">
+                          <%= form_with(model: [wine, wine.comments.build], html: { onsubmit: "sessionStorage.setItem('scrollPos', window.scrollY)" }) do |rf| %>
+                            <%= rf.hidden_field :parent_id, value: comment.id %>
+                            <div class="input-group input-group-sm rounded-3 overflow-hidden shadow-sm">
+                              <%= rf.text_field :content, class: "form-control border-0 bg-white", placeholder: "Escreva sua resposta..." %>
+                              <%= rf.submit "Ok", class: "btn btn-primary btn-sm px-3" %>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+
                   <% end %>
                 <% end %>
               </div>
 
+              <%# Formulário Principal de Comentários %>
               <% if user_signed_in? %>
-                <%= form_with(model: [wine, wine.comments.build], class: "mt-3 pt-3 border-top") do |f| %>
-                  <div class="input-group">
-                    <%= f.text_field :content, class: "form-control border-0 shadow-sm bg-white rounded-start", placeholder: "Escreva um comentário...", required: true %>
-                    <%= f.submit "Publicar", class: "btn btn-primary fw-bold shadow-sm px-3" %>
+                <%= form_with(model: [wine, wine.comments.build], class: "mt-3 pt-3 border-top", html: { onsubmit: "sessionStorage.setItem('scrollPos', window.scrollY)" }) do |f| %>
+                  <div class="input-group rounded-3 overflow-hidden shadow-sm">
+                    <%= f.text_field :content, class: "form-control border-0 bg-white rounded-start py-2", placeholder: "Escreva um comentário...", required: true %>
+                    <%= f.submit "Publicar", class: "btn btn-primary fw-bold px-3" %>
                   </div>
                 <% end %>
               <% end %>
@@ -163,10 +202,29 @@
         <% end %>
       <% else %>
         <div class="text-center py-5 bg-white rounded-4 shadow-sm">
-          <p class="text-muted mb-0">Nenhum vinho encontrado para sua busca. 🍷</p>
+          <p class="text-muted mb-0">Nenhum vinho encontrado. 🍷</p>
         </div>
       <% end %>
 
     </div>
   </div>
 </div>
+
+<script>
+  (function() {
+    const restore = () => {
+      const scrollPos = sessionStorage.getItem('scrollPos');
+      if (scrollPos) {
+        window.requestAnimationFrame(() => {
+          window.scrollTo({
+            top: parseInt(scrollPos),
+            behavior: 'instant'
+          });
+          sessionStorage.removeItem('scrollPos');
+        });
+      }
+    };
+    document.addEventListener("turbo:render", restore);
+    document.addEventListener("turbo:load", restore);
+  })();
+</script>
