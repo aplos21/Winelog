@@ -91,5 +91,45 @@
     border: 1px solid rgba(255, 255, 255, 0.4) !important;
   }
 
+  /* Configurações Visuais do Layout da Confraria */
+body {
+  background-image: asset-url("background-confraria.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.main-content-area {
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+.navbar {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-logo-custom {
+  height: 40px;
+  width: auto;
+  margin-right: 8px;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .nav-item-mobile-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
 
   
