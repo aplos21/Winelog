@@ -50,9 +50,11 @@ RUN bundle install && \
 # Copia o código da aplicação
 COPY . .
 
-# Pré-compila o Bootsnap e Assets
+# Pré-compila o Bootsnap e Assets (Garante a existência física da pasta para o Kamal 2)
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile && \
+    mkdir -p public/assets && \
+    touch public/assets/.keep
 
 # --- FASE FINAL ---
 FROM base
@@ -66,3 +68,17 @@ RUN mkdir -p /opt/oracle && cd /opt/oracle && \
 # Executa como usuário não-root por segurança
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
+
+# Define permissões na pasta do Oracle para o usuário rails conseguir ler os drivers
+RUN chown -R rails:rails /opt/oracle
+
+USER 1000:1000
+
+# Copia os artefatos gerados no build
+COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --chown=rails:rails --from=build /rails /rails
+
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+
+EXPOSE 80
+CMD ["./bin/thrust", "./bin/rails", "server"]
