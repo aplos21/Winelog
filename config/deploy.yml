@@ -11,6 +11,8 @@ proxy:
 servers:
   web:
     - 157.151.28.170
+  options:
+    allow_hosts: true
 
 # Onde as imagens do contêiner serão guardadas
 registry:
@@ -26,7 +28,7 @@ env:
     RAILS_LOG_TO_STDOUT: true
     SOLID_QUEUE_IN_PUMA: true
     DB_ADAPTER: postgresql    # <-- Garantindo que use o Postgres
-    DB_HOST: 157.151.28.170   # <-- IP da sua VPS onde o banco vai rodar
+    DB_HOST: host.docker.io   # <-- IP da sua VPS onde o banco vai rodar
     DB_PORT: 5432
     DB_NAME: winelog_production
   secret:

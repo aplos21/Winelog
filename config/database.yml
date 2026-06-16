@@ -105,10 +105,11 @@ test:
 #     database: winelog_production_cable
 #     migrations_paths: db/cable_migrate
 production:
-  adapter: postgresql
-  host: <%= ENV["DB_HOST"] %>
-  port: <%= ENV["DB_PORT"] %>
-  username: <%= ENV["DB_USER"] %>
-  password: <%= ENV["DB_PASSWORD"] %>
-  database: <%= ENV["DB_NAME"] %>
+  adapter: <%= ENV.fetch("DB_ADAPTER") { "postgresql" } %>
+  encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("DB_PORT") { 5432 } %>
+  database: <%= ENV.fetch("DB_NAME") { "winelog_production" } %>
+  username: <%= ENV.fetch("DB_USER") { "winelog" } %>
+  password: <%= ENV["DB_PASSWORD"] %>
