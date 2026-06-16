@@ -28,5 +28,7 @@ module Winelog
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    # Impede que o ActiveRecord tente conectar ou validar o adaptador no precompile
+    config.assets.initialize_on_precompile = false
   end
 end

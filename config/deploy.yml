@@ -10,7 +10,7 @@ proxy:
 # Servidor VPS da Oracle Cloud (Vinhedo)
 servers:
   web:
-    - 157.151.28.170 # <-- Voltou para a sintaxe limpa do Kamal 2 (sem misturar options)
+    - 157.151.28.170
 
 # Onde as imagens do contêiner serão guardadas
 registry:
@@ -25,11 +25,14 @@ env:
     RAILS_ENV: production
     RAILS_LOG_TO_STDOUT: true
     SOLID_QUEUE_IN_PUMA: true
+    SOLID_CABLE_IN_PUMA: true
     DB_ADAPTER: postgresql
-    # CORRIGIDO: O Rails vai achar o Postgres direto pela rede interna do Kamal usando este nome
     DB_HOST: winelog-db
     DB_PORT: 5432
     DB_NAME: winelog_production
+    # FORÇANDO O USUÁRIO E SENHA AQUI PARA O RAILS NÃO USAR 'SYSTEM'
+    DB_USER: winelog
+    DB_PASSWORD: MinhaSenhaSegura2026
   secret:
     - RAILS_MASTER_KEY
     - ADMIN_EMAIL
@@ -58,7 +61,7 @@ aliases:
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
 
-# Acessório do PostgreSQL (compatível com seu Gemfile)
+# Acessório do PostgreSQL (Sintaxe estrita Kamal 2)
 accessories:
   db:
     image: postgres:16
@@ -67,9 +70,8 @@ accessories:
     env:
       clear:
         POSTGRES_DB: winelog_production
-      secret:
-        - POSTGRES_USER
-        - POSTGRES_PASSWORD
+        # Movidos para o bloco 'clear' para o Kamal não engasgar com arquivos de segredos
+        POSTGRES_USER: winelog
+        POSTGRES_PASSWORD: MinhaSenhaSegura2026
     volumes:
       - "winelog_db_data:/var/lib/postgresql/data"
-    # Portas internas (não expõe o banco para a internet, mantendo seguro)
