@@ -11,8 +11,7 @@ proxy:
 servers:
   web:
     - 157.151.28.170
-  options:
-    allow_hosts: true
+ 
 
 # Onde as imagens do contêiner serão guardadas
 registry:
@@ -52,6 +51,10 @@ ssh:
 builder:
   arch: arm64
   remote: ssh://ubuntu@157.151.28.170
+# ADICIONE ESTE BLOCO AQUI PARA ADICIONAR O IP DO HOST NO DOCKER:
+boot:
+  options:
+    add-host: "host.docker.io:host-gateway"
 
 # Atalhos úteis
 aliases:
