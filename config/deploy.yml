@@ -10,11 +10,7 @@ proxy:
 # Servidor VPS da Oracle Cloud (Vinhedo)
 servers:
   web:
-    hosts:
-      - 157.151.28.170
-    options:
-      # CORRIGIDO: O nome correto do gateway padrão do Docker é host.docker.internal
-      add-host: "host.docker.internal:host-gateway"
+    - 157.151.28.170 # <-- Voltou para a sintaxe limpa do Kamal 2 (sem misturar options)
 
 # Onde as imagens do contêiner serão guardadas
 registry:
@@ -30,8 +26,8 @@ env:
     RAILS_LOG_TO_STDOUT: true
     SOLID_QUEUE_IN_PUMA: true
     DB_ADAPTER: postgresql
-    # CORRIGIDO: Alinhado com o mapeamento do add-host acima
-    DB_HOST: host.docker.internal
+    # CORRIGIDO: O Rails vai achar o Postgres direto pela rede interna do Kamal usando este nome
+    DB_HOST: winelog-db
     DB_PORT: 5432
     DB_NAME: winelog_production
   secret:
@@ -76,4 +72,4 @@ accessories:
         - POSTGRES_PASSWORD
     volumes:
       - "winelog_db_data:/var/lib/postgresql/data"
-    port: "5432:5432"
+    # Portas internas (não expõe o banco para a internet, mantendo seguro)
