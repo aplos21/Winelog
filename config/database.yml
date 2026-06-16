@@ -105,7 +105,7 @@ test:
 #     database: winelog_production_cable
 #     migrations_paths: db/cable_migrate
 production:
-  adapter: oracle_enhanced
+  adapter: postgresql
   host: <%= ENV["DB_HOST"] %>
   port: <%= ENV["DB_PORT"] %>
   username: <%= ENV["DB_USER"] %>
