@@ -53,8 +53,7 @@ builder:
   remote: ssh://ubuntu@157.151.28.170
 # ADICIONE ESTE BLOCO AQUI PARA ADICIONAR O IP DO HOST NO DOCKER:
 boot:
-  options:
-    add-host: "host.docker.io:host-gateway"
+  arguments: --add-host=host.docker.io:host-gateway
 
 # Atalhos úteis
 aliases:
