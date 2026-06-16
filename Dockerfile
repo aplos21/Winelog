@@ -7,13 +7,14 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 # Rails app lives here
 WORKDIR /rails
 
-# Instala pacotes base e dependências do Oracle Client (libaio1)
+# Instala pacotes base e dependências dinâmicas do Oracle Client (Suporta Debian 11, 12 e 13)
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libaio1 wget unzip && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips wget unzip && \
+    (apt-get install --no-install-recommends -y libaio1t64 || apt-get install --no-install-recommends -y libaio1) && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Configura variáveis de ambiente globais
+# Configura variáveis de ambiente globais com o caminho exato do Instant Client 21.15
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
@@ -65,17 +66,3 @@ RUN mkdir -p /opt/oracle && cd /opt/oracle && \
 # Executa como usuário não-root por segurança
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
-
-# Define permissões na pasta do Oracle para o usuário rails conseguir ler os drivers
-RUN chown -R rails:rails /opt/oracle
-
-USER 1000:1000
-
-# Copia os artefatos gerados no build
-COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-COPY --chown=rails:rails --from=build /rails /rails
-
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
-
-EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
