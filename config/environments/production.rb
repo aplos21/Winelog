@@ -58,8 +58,23 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+# Força o Rails a te mostrar se o envio de e-mail falhar por algum motivo
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
 
+  # O IP ou domínio da sua VPS para gerar os links corretos do Devise
+  config.action_mailer.default_url_options = { host: "157.151.28.170" }
+
+  config.action_mailer.smtp_settings = {
+    address:              'smtp.gmail.com',
+    port:                 587,
+    domain:               'gmail.com',
+    user_name:            ENV['SMTP_USERNAME'], # Seu e-mail configurado no deploy.yml
+    password:             ENV['SMTP_PASSWORD'], # Sua Senha de App gerada no Gmail
+    authentication:       'plain',
+    enable_starttls_auto: true
+  }
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
   #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
