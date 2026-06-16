@@ -4,14 +4,14 @@ service: winelog
 # Nome da imagem no Docker Hub
 image: mateusmed31415/winelog
 
+proxy:
+  app_port: 80
+
 # Servidor VPS da Oracle Cloud (Vinhedo)
 servers:
   web:
     - 157.151.28.170
-
-# Roteamento interno do Kamal Proxy para o Rails
-proxy:
-  app_port: 3000
+  
 
 # Onde as imagens do contêiner serão guardadas
 registry:
@@ -26,12 +26,16 @@ env:
     RAILS_ENV: production
     RAILS_LOG_TO_STDOUT: true
     SOLID_QUEUE_IN_PUMA: true
-    # Substitua abaixo com os dados reais de conexão do seu Oracle
-    DATABASE_URL: "oracle_enhanced://usuario_prod:senha_prod@IP_DO_SEU_ORACLE:1521/NOME_DO_SERVICO"
+    RAILS_PORT: 3000
   secret:
     - RAILS_MASTER_KEY
     - ADMIN_EMAIL
-
+    - DB_ADAPTER
+    - DB_HOST
+    - DB_PORT
+    - DB_USER
+    - DB_PASSWORD
+    - DB_NAME
 # Volumes persistentes para uploads locais do Active Storage
 volumes:
   - "winelog_storage:/rails/storage"
@@ -52,3 +56,17 @@ aliases:
   console: app exec --interactive --reuse "bin/rails console"
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
+
+accessories:
+  db:
+    image: container-registry.oracle.com/database/free:latest
+    roles:
+      - web
+    env:
+      clear:
+        ORACLE_SID: FREE
+      secret:
+        - ORACLE_PASSWORD
+    volumes:
+      - "winelog_db_data:/opt/oracle/oradata"
+    port: "1521:1521"

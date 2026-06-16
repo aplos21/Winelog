@@ -105,23 +105,10 @@ test:
 #     database: winelog_production_cable
 #     migrations_paths: db/cable_migrate
 production:
-  primary: &primary_production
-    adapter: postgresql
-    encoding: unicode
-    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-    host: <%= ENV["DB_HOST"] %>
-    database: "winelog_production"
-    username: "winelog"
-    password: <%= ENV["POSTGRES_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: winelog_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: winelog_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: winelog_production_cable
-    migrations_paths: db/cable_migrate
+  adapter: oracle_enhanced
+  host: <%= ENV["DB_HOST"] %>
+  port: <%= ENV["DB_PORT"] %>
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  database: <%= ENV["DB_NAME"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

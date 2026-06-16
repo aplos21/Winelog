@@ -1,77 +1,81 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t winelog .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name winelog winelog
-
-# For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
-
-# Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.4.5
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
 WORKDIR /rails
 
-# Install base packages
+# Instala pacotes base e dependências do Oracle Client (libaio1)
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libaio1 wget unzip && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Set production environment variables and enable jemalloc for reduced memory usage and latency.
+# Configura variáveis de ambiente globais
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
-    LD_PRELOAD="/usr/local/lib/libjemalloc.so"
+    LD_PRELOAD="/usr/local/lib/libjemalloc.so" \
+    LD_LIBRARY_PATH="/opt/oracle/instantclient_21_15" \
+    PATH="$PATH:/opt/oracle/instantclient_21_15"
 
-# Throw-away build stage to reduce size of final image
+# --- FASE DE BUILD ---
 FROM base AS build
 
-# Install packages needed to build gems
+# Instala ferramentas de compilação básicas e libs de desenvolvimento
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
+    apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Install application gems
+# Baixa e configura o Oracle Instant Client SDK para a Gem poder compilar as extensões em C
+RUN mkdir -p /opt/oracle && cd /opt/oracle && \
+    wget https://download.oracle.com/otn_software/linux/instantclient/2115000/instantclient-basiclite-linux.x64-21.15.0.0.0dbru.zip && \
+    wget https://download.oracle.com/otn_software/linux/instantclient/2115000/instantclient-sdk-linux.x64-21.15.0.0.0dbru.zip && \
+    unzip instantclient-basiclite-linux.x64-21.15.0.0.0dbru.zip && \
+    unzip instantclient-sdk-linux.x64-21.15.0.0.0dbru.zip && \
+    rm -f *.zip
+
+# Instala as gems do aplicativo
 COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
 
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
-    # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
     bundle exec bootsnap precompile -j 1 --gemfile
 
-# Copy application code
+# Copia o código da aplicação
 COPY . .
 
-# Precompile bootsnap code for faster boot times.
-# -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
+# Pré-compila o Bootsnap e Assets
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
-
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-
-
-
-# Final stage for app image
+# --- FASE FINAL ---
 FROM base
 
-# Run and own only the runtime files as a non-root user for security
+# Instala o Oracle Instant Client de runtime na imagem final
+RUN mkdir -p /opt/oracle && cd /opt/oracle && \
+    wget https://download.oracle.com/otn_software/linux/instantclient/2115000/instantclient-basiclite-linux.x64-21.15.0.0.0dbru.zip && \
+    unzip instantclient-basiclite-linux.x64-21.15.0.0.0dbru.zip && \
+    rm -f *.zip
+
+# Executa como usuário não-root por segurança
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
+
+# Define permissões na pasta do Oracle para o usuário rails conseguir ler os drivers
+RUN chown -R rails:rails /opt/oracle
+
 USER 1000:1000
 
-# Copy built artifacts: gems, application
+# Copia os artefatos gerados no build
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
 
-# Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
 EXPOSE 80
 CMD ["./bin/thrust", "./bin/rails", "server"]
