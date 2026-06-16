@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Health check do Rails utilizado pelo Kamal Proxy para validar o deploy
   get "up" => "rails/health#show", as: :rails_health_check
-
+  get '/users/:id/approve', to: 'admin_approvals#approve', as: :approve_user
   # Página inicial do site
   root "wines#index"
   

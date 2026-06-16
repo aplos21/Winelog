@@ -1,0 +1,17 @@
+<h2>Novo Cadastro no Winelog!</h2>
+
+<p>O usuário <strong><%= @user.email %></strong> acabou de se cadastrar e confirmar o e-mail.</p>
+<p>Ele está aguardando a sua autorização para conseguir acessar a plataforma.</p>
+
+<hr />
+
+<div style="margin-top: 20px;">
+  <a href="<%= @approve_url %>" 
+     style="background-color: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-right: 15px;">
+    Aprovar Membro
+  </a>
+
+  <span style="color: #6c757d; font-size: 14px; font-style: italic;">
+    (Para ignorar, basta fechar ou apagar este e-mail. A conta continuará bloqueada.)
+  </span>
+</div>

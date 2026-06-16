@@ -38,6 +38,8 @@ env:
     - ADMIN_EMAIL
     - DB_USER
     - DB_PASSWORD
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
 
 # Volumes persistentes para uploads locais do Active Storage
 volumes:
