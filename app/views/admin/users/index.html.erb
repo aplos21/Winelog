@@ -1,0 +1,40 @@
+<div style="padding: 30px; max-width: 1200px; margin: 0 auto; font-family: sans-serif;">
+  <h1 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">Painel de Controle de Membros</h1>
+
+  <% if notice %>
+    <p style="color: green; background: #e6f4ea; padding: 10px; border-radius: 5px;"><%= notice %></p>
+  <% end %>
+
+  <table style="width: 100%; border-collapse: collapse; margin-top: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+    <thead>
+      <tr style="background-color: #f8f9fa; text-align: left;">
+        <th style="padding: 12px; border-bottom: 2px solid #dee2e6;">E-mail</th>
+        <th style="padding: 12px; border-bottom: 2px solid #dee2e6;">Status</th>
+        <th style="padding: 12px; border-bottom: 2px solid #dee2e6;">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr style="border-bottom: 1px solid #dee2e6;">
+          <td style="padding: 12px;"><%= user.email %></td>
+          <td style="padding: 12px;">
+            <% if user.approved? %>
+              <span style="color: green; font-weight: bold; background: #e6f4ea; padding: 3px 8px; border-radius: 10px;">Aprovado</span>
+            <% else %>
+              <span style="color: #b71c1c; font-weight: bold; background: #ffebee; padding: 3px 8px; border-radius: 10px;">Pendente</span>
+            <% end %>
+          </td>
+          <td style="padding: 12px;">
+            <% unless user.approved? %>
+              <%= button_to "Aceitar", approve_admin_user_path(user), method: :patch, style: "background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-block; margin-right: 5px;" %>
+            <% end %>
+            
+            <% unless user.email == 'mms1@icomp.ufam.edu.br' %>
+              <%= button_to "Deletar / Recusar", admin_user_path(user), method: :delete, data: { confirm: "Tem certeza?" }, style: "background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-block;" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

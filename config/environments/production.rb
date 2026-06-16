@@ -35,18 +35,15 @@ Rails.application.configure do
   # Replace the default in-process memory cache store.
   config.cache_store = :solid_cache_store
 
-  # Replace the default in-process and non-durable queuing backend for Active Job.
+  # Configuração limpa de filas em segundo plano (Modo síncrono/assíncrono básico)
   config.active_job.queue_adapter = :async
-  config.solid_queue.connects_to = { database: { writing: :queue } }
 
-# --- CONFIGURAÇÃO DO ACTION MAILER (MODO SEGURO) ---
+  # --- CONFIGURAÇÃO DO ACTION MAILER (MODO SEGURO) ---
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_deliveries = false
-  
-  # Altere para :test para o Rails simular o envio na memória sem estourar erro 500
   config.action_mailer.delivery_method = :test
   config.action_mailer.default_url_options = { host: "157.151.28.170" }
-  # -----------------------------------------------------------------------------------------------------
+  # -----------------------------------------------------
 
   # Enable locale fallbacks for I18n.
   config.i18n.fallbacks = true
