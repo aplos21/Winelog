@@ -22,6 +22,6 @@ class User < ApplicationRecord
   # o Rails dispara a notificação com os botões para o mms1@icomp.ufam.edu.br
   def after_confirmation
     super
-    AdminMailer.new_user_waiting_approval(self).deliver_later
+    AdminMailer.new_user_waiting_approval(self).deliver_now
   end
 end

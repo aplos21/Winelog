@@ -39,14 +39,14 @@ Rails.application.configure do
   config.active_job.queue_adapter = :async
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-  # --- CONFIGURAÇÃO DO ACTION MAILER (SISTEMA DE E-MAIL) ---
-  config.action_mailer.raise_delivery_errors = true
+# --- CONFIGURAÇÃO DO ACTION MAILER (MODO SEGURO) ---
+  config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_deliveries = true
   
-  # Usando o letter_opener em produção para interceptar os e-mails com segurança na VPS
-  config.action_mailer.delivery_method = :letter_opener
+  # Altere para :test para o Rails simular o envio na memória sem estourar erro 500
+  config.action_mailer.delivery_method = :test
   config.action_mailer.default_url_options = { host: "157.151.28.170" }
-  # ---------------------------------------------------------
+  # -----------------------------------------------------------------------------------------------------
 
   # Enable locale fallbacks for I18n.
   config.i18n.fallbacks = true
