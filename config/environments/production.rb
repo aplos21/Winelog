@@ -41,7 +41,7 @@ Rails.application.configure do
 
 # --- CONFIGURAÇÃO DO ACTION MAILER (MODO SEGURO) ---
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.perform_deliveries = true
+  config.action_mailer.perform_deliveries = false
   
   # Altere para :test para o Rails simular o envio na memória sem estourar erro 500
   config.action_mailer.delivery_method = :test
