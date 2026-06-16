@@ -5,13 +5,16 @@ service: winelog
 image: mateusmed31415/winelog
 
 proxy:
-  app_port: 3000 # <-- CORRIGIDO: Alinhado com a porta padrão do Rails 8
+  app_port: 3000
 
 # Servidor VPS da Oracle Cloud (Vinhedo)
 servers:
   web:
-    - 157.151.28.170
- 
+    hosts:
+      - 157.151.28.170
+    options:
+      run_args:
+        - "--add-host=host.docker.io:host-gateway"
 
 # Onde as imagens do contêiner serão guardadas
 registry:
@@ -26,8 +29,8 @@ env:
     RAILS_ENV: production
     RAILS_LOG_TO_STDOUT: true
     SOLID_QUEUE_IN_PUMA: true
-    DB_ADAPTER: postgresql    # <-- Garantindo que use o Postgres
-    DB_HOST: host.docker.io   # <-- IP da sua VPS onde o banco vai rodar
+    DB_ADAPTER: postgresql    
+    DB_HOST: host.docker.io   
     DB_PORT: 5432
     DB_NAME: winelog_production
   secret:
@@ -51,9 +54,6 @@ ssh:
 builder:
   arch: arm64
   remote: ssh://ubuntu@157.151.28.170
-# ADICIONE ESTE BLOCO AQUI PARA ADICIONAR O IP DO HOST NO DOCKER:
-boot:
-  arguments: --add-host=host.docker.io:host-gateway
 
 # Atalhos úteis
 aliases:
@@ -61,7 +61,7 @@ aliases:
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
 
-# CORRIGIDO: Trocado Oracle Database por PostgreSQL (compatível com seu Gemfile)
+# Acessório do PostgreSQL
 accessories:
   db:
     image: postgres:16
