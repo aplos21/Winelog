@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # Health check do Rails utilizado pelo Kamal Proxy para validar o deploy
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Painel de Controle do Administrador (Onde você gerencia os membros)
+  # CONFIGURAÇÃO DO PAINEL ADMIN (Adicione exatamente este bloco)
   namespace :admin do
     resources :users, only: [:index, :destroy] do
       member do
