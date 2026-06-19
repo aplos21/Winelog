@@ -1,6 +1,6 @@
 # Winelog
 Projeto web em ruby on rails desenvolvido para os amantes de vinhos, para que possam compartilhas momentos e sabores.
-Pode ser acessado no site http://157.151.28.170/
+Pode ser acessado no site http://157.151.28.170/.
 Desenvolvido utilizando a gem devise e kamal
 =======
 
