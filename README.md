@@ -1,8 +1,18 @@
 <<<<<<< HEAD
-<img width="1415" height="909" alt="download" src="https://github.com/user-attachments/assets/b8381cfb-4b92-466a-98fc-1b656b451c64" />
+
+
+https://github.com/user-attachments/assets/98d1ef1d-35e6-44f9-94ab-670f67098d6c
+
+
 # Winelog
-Projeto em ruby on rails 
+Projeto web em ruby on rails desenvolvido para os amantes de vinhos, para que possam compartilhas momentos e sabores
 =======
+# Modelo relacio do Bando de dados
+
+Foi desenvolvido no dbdiagram.io
+<img width="1322" height="779" alt="Captura de tela de 2026-06-19 19-32-29" src="https://github.com/user-attachments/assets/7ad9a566-535e-4756-9104-ac453b3010d4" />
+
+
 # README
 
 This README would normally document whatever steps are necessary to get the
