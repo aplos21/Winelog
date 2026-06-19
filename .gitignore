@@ -36,3 +36,6 @@
 # Ignorar arquivos de variáveis de ambiente locais
 .env
 .kamal
+
+.kamal/secrets
+config/secrets.env
