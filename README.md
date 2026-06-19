@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-
-
-https://github.com/user-attachments/assets/98d1ef1d-35e6-44f9-94ab-670f67098d6c
-
-
 # Winelog
 Projeto web em ruby on rails desenvolvido para os amantes de vinhos, para que possam compartilhas momentos e sabores
 =======
+https://github.com/user-attachments/assets/98d1ef1d-35e6-44f9-94ab-670f67098d6c
 # Modelo relacio do Bando de dados
 
 Foi desenvolvido no dbdiagram.io
